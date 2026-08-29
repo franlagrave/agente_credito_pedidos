@@ -1,0 +1,106 @@
+{
+  "_descripcion": "Base ficticia de 10 clientes para probar el Agente de Gestión Inteligente de Crédito y Liberación de Pedidos. Todos los datos son inventados con fines académicos.",
+  "_moneda": "USD",
+  "clientes": {
+    "CLI-1001": {
+      "razon_social": "Distribuidora del Plata S.A.",
+      "cuit": "30-71234567-1",
+      "contacto": "Marcela Ferreyra — mferreyra@delplata.com.ar — +54 11 4555-1001",
+      "limite_credito": 150000,
+      "fecha_ultimo_balance": "2026-04-30",
+      "saldo_cuenta_corriente": 40000,
+      "deuda_vencida": 0,
+      "calificacion_veraz": 1
+    },
+    "CLI-1002": {
+      "razon_social": "Comercial Norte S.R.L.",
+      "cuit": "30-70987654-2",
+      "contacto": "Juan Pablo Achával — jpachaval@comnorte.com.ar — +54 341 456-1002",
+      "limite_credito": 100000,
+      "fecha_ultimo_balance": "2026-03-31",
+      "saldo_cuenta_corriente": 80000,
+      "deuda_vencida": 30000,
+      "calificacion_veraz": 1
+    },
+    "CLI-1003": {
+      "razon_social": "Mayorista Cuyo S.A.",
+      "cuit": "30-71555888-9",
+      "contacto": "Silvina Roldán — sroldan@mayoristacuyo.com — +54 261 422-1003",
+      "limite_credito": 80000,
+      "fecha_ultimo_balance": "2025-12-31",
+      "saldo_cuenta_corriente": 15000,
+      "deuda_vencida": 0,
+      "calificacion_veraz": 3
+    },
+    "CLI-1004": {
+      "razon_social": "Insumos del Litoral S.A.",
+      "cuit": "33-69876543-2",
+      "contacto": "Gustavo Benítez — gbenitez@insumoslitoral.com.ar — +54 342 431-1004",
+      "limite_credito": 120000,
+      "fecha_ultimo_balance": "2024-06-30",
+      "saldo_cuenta_corriente": 20000,
+      "deuda_vencida": 0,
+      "calificacion_veraz": 1
+    },
+    "CLI-1005": {
+      "razon_social": "Grupo Austral Comercial S.R.L.",
+      "cuit": "30-71029384-4",
+      "contacto": "Verónica Paz — vpaz@grupoaustral.com.ar — +54 2920 43-1005",
+      "limite_credito": 90000,
+      "fecha_ultimo_balance": "2026-05-31",
+      "saldo_cuenta_corriente": 12000,
+      "deuda_vencida": 8500,
+      "calificacion_veraz": 5
+    },
+    "CLI-1006": {
+      "razon_social": "Ferretería Industrial Rosario S.A.",
+      "cuit": "30-70456123-3",
+      "contacto": "Damián Sotelo — dsotelo@firosario.com.ar — +54 341 480-1006",
+      "limite_credito": 60000,
+      "fecha_ultimo_balance": "2024-12-31",
+      "saldo_cuenta_corriente": 10000,
+      "deuda_vencida": 0,
+      "calificacion_veraz": 3
+    },
+    "CLI-1007": {
+      "razon_social": "Almacenes del Sur S.R.L.",
+      "cuit": "27-28765433-8",
+      "contacto": "Laura Quiroga — lquiroga@almacenesdelsur.com — +54 2901 42-1007",
+      "limite_credito": 45000,
+      "fecha_ultimo_balance": "2026-02-28",
+      "saldo_cuenta_corriente": 41000,
+      "deuda_vencida": 0,
+      "calificacion_veraz": 1
+    },
+    "CLI-1008": {
+      "razon_social": "Tecno Aprovisionamiento S.A.",
+      "cuit": "30-71888999-1",
+      "contacto": "Federico Basualdo — fbasualdo@tecnoaprov.com.ar — +54 11 4788-1008",
+      "limite_credito": 200000,
+      "fecha_ultimo_balance": "2026-06-30",
+      "saldo_cuenta_corriente": 0,
+      "deuda_vencida": 0,
+      "calificacion_veraz": 1
+    },
+    "CLI-1009": {
+      "razon_social": "Corralón Pampeano — Héctor Vidal",
+      "cuit": "20-31456789-8",
+      "contacto": "Héctor Vidal — hvidal@corralonpampeano.com.ar — +54 2954 45-1009",
+      "limite_credito": 25000,
+      "fecha_ultimo_balance": "2025-09-30",
+      "saldo_cuenta_corriente": 5000,
+      "deuda_vencida": 1200,
+      "calificacion_veraz": 1
+    },
+    "CLI-1010": {
+      "razon_social": "Logística y Depósitos Andinos S.A.",
+      "cuit": "30-70112233-6",
+      "contacto": "Andrea Milessi — amilessi@ldandinos.com — +54 381 423-1010",
+      "limite_credito": 110000,
+      "fecha_ultimo_balance": "2024-03-31",
+      "saldo_cuenta_corriente": 35000,
+      "deuda_vencida": 0,
+      "calificacion_veraz": 3
+    }
+  }
+}

@@ -1,0 +1,61 @@
+[
+  {
+    "id": "comprension_extraccion_solicitudes",
+    "nombre": "Comprensión y Extracción de Solicitudes",
+    "descripcion": "Interpreta el pedido tal como lo describe el vendedor en lenguaje natural (correo, mensaje, adjunto), identifica el cliente, el número de pedido y el monto, y normaliza la información al formato interno del agente.",
+    "tools": ["listar_clientes"],
+    "activa_cuando": "Al llegar cada nueva solicitud u oportunidad comercial.",
+    "instrucciones": "Antes de llamar a cualquier otra tool, identificá el cliente (ID o CUIT), el pedido_id y el monto_pedido. Si el usuario menciona al cliente por razón social, usá listar_clientes con un filtro para resolver su ID. Si falta un dato imprescindible, pedilo: nunca lo inventes.",
+    "requiere_aprobacion_humana": false
+  },
+  {
+    "id": "evaluacion_riesgo_crediticio",
+    "nombre": "Evaluación de Riesgo Crediticio",
+    "descripcion": "Obtiene la ficha crediticia del cliente y aplica la política vigente mediante cálculo aritmético para determinar si el pedido es APTO o NO APTO, explicando el resultado con los números a la vista.",
+    "tools": ["consultar_credito_cliente", "evaluar_politica_credito"],
+    "activa_cuando": "Al recibir un pedido, y cada vez que se reevalúa la situación luego de una gestión de cobranza o un pago acreditado.",
+    "instrucciones": "Llamá primero a consultar_credito_cliente y después a evaluar_politica_credito. Nunca calcules el límite disponible de cabeza ni inventes valores de límite, saldo, deuda o calificación Veraz: el veredicto siempre lo da la tool. Al responder, mostrá el cálculo (límite x factor Veraz x factor balance - saldo = disponible) para que la decisión sea auditable.",
+    "requiere_aprobacion_humana": false
+  },
+  {
+    "id": "gestion_cobranza_seguimiento",
+    "nombre": "Gestión de Cobranza y Seguimiento de Compromisos",
+    "descripcion": "Cuando el cliente tiene deuda vencida, notifica a Ventas, contacta al cliente solicitando compromiso o acreditación de pago, registra el pago cuando se informa y dispara la reevaluación del pedido.",
+    "tools": ["gestionar_cobranza", "registrar_pago"],
+    "activa_cuando": "Cuando evaluar_politica_credito devuelve apto=false por deuda vencida.",
+    "instrucciones": "Informá al usuario el monto exacto de la deuda vencida y el plazo otorgado. Si el usuario avisa que el cliente pagó, llamá a registrar_pago con el importe acreditado y después volvé a ejecutar evaluar_politica_credito: nunca asumas que la deuda quedó saldada sin registrar el pago primero.",
+    "requiere_aprobacion_humana": false
+  },
+  {
+    "id": "liberacion_documentacion_pedidos",
+    "nombre": "Liberación y Documentación de Pedidos",
+    "descripcion": "Genera el documento de venta en el ERP, imputa el monto al saldo de cuenta corriente del cliente y notifica a Ventas y Logística para que continúe la entrega y la facturación.",
+    "tools": ["liberar_pedido"],
+    "activa_cuando": "Cuando evaluar_politica_credito devolvió apto=true, o cuando una excepción fue aprobada por una persona.",
+    "instrucciones": "Llamá a liberar_pedido con es_excepcion=false para el caso estándar. Usá es_excepcion=true únicamente si una persona aprobó explícitamente la excepción en esta conversación, e indicá quién la aprobó en aprobado_por.",
+    "requiere_aprobacion_humana": false
+  },
+  {
+    "id": "gestion_excepciones_escalamiento",
+    "nombre": "Gestión de Excepciones y Escalamiento",
+    "descripcion": "Detecta cuándo la única salida disponible implica una acción irreversible (liberar un pedido NO APTO, modificar un límite de crédito o aprobar una excepción comercial), arma un resumen del caso con los números para una persona, solicita su aprobación e interpreta la respuesta.",
+    "tools": ["evaluar_politica_credito", "liberar_pedido"],
+    "activa_cuando": "Cuando el pedido es NO APTO y no puede regularizarse por la vía normal: calificación Veraz categoría 5, deuda vencida sin acreditar dentro del plazo, o monto que excede el crédito disponible sin margen.",
+    "instrucciones": "Nunca ejecutes una acción irreversible sin aprobación humana explícita en la conversación. Presentá el caso con contexto completo (razón social, CUIT, monto del pedido, crédito disponible, deuda vencida, calificación Veraz, gestiones ya realizadas) y preguntá directamente si se aprueba la excepción. Solo si la persona responde afirmativamente, llamá a liberar_pedido con es_excepcion=true y su nombre en aprobado_por. Una calificación Veraz categoría 5 es la situación de mayor riesgo: dejalo explícito al escalar.",
+    "requiere_aprobacion_humana": true,
+    "acciones_irreversibles": [
+      "Liberar un pedido que incumple la política de crédito",
+      "Modificar un límite de crédito",
+      "Aprobar una excepción comercial"
+    ]
+  },
+  {
+    "id": "trazabilidad_reporte_desempeno",
+    "nombre": "Trazabilidad y Reporte de Desempeño",
+    "descripcion": "Registra cada paso del proceso en el log auditable y resume el resultado de cada caso, base de los indicadores de desempeño del agente.",
+    "tools": [],
+    "activa_cuando": "De forma continua, en cada cierre de ciclo (pedido liberado, bloqueado o excepción resuelta).",
+    "instrucciones": "Al cerrar cada caso, resumí en una línea el resultado final (APTO y liberado / NO APTO y bloqueado / liberado por excepción, con quién aprobó) para que quede trazado en la conversación.",
+    "requiere_aprobacion_humana": false
+  }
+]

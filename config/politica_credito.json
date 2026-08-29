@@ -1,0 +1,22 @@
+{
+  "_descripcion": "Parámetros de la política de crédito vigente. Editar este archivo cambia la aritmética que aplica el agente, sin tocar el código.",
+  "factor_por_calificacion_veraz": {
+    "1": 1.0,
+    "3": 0.5,
+    "5": 0.0
+  },
+  "significado_calificacion_veraz": {
+    "1": "Situación normal — se habilita el 100% del límite de crédito.",
+    "3": "Con problemas / riesgo medio — se habilita solo el 50% del límite de crédito.",
+    "5": "Irrecuperable — no se habilita crédito. El pedido se rechaza y solo puede liberarse como excepción aprobada por una persona.",
+    "_nota": "Categorías tomadas de la escala del BCRA que reporta Veraz (1 = normal, 3 = con problemas, 5 = irrecuperable)."
+  },
+  "balance": {
+    "antiguedad_maxima_meses": 18,
+    "factor_si_vencido": 0.5,
+    "_nota": "Si el último balance presentado tiene más de 18 meses, la información financiera se considera desactualizada y el límite habilitado se reduce a la mitad."
+  },
+  "tolerancia_deuda_vencida": 0,
+  "_nota_deuda_vencida": "Cualquier deuda vencida mayor a esta tolerancia (en USD) bloquea la liberación automática del pedido y dispara la gestión de cobranza.",
+  "formula": "limite_ajustado = limite_credito x factor_veraz x factor_balance ; credito_disponible = limite_ajustado - saldo_cuenta_corriente ; APTO si (veraz != 5) y (deuda_vencida <= tolerancia) y (monto_pedido <= credito_disponible)"
+}

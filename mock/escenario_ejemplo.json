@@ -1,0 +1,4 @@
+{
+  "nombre": "Ejemplo del TP — cliente con deuda vencida (CLI-1002)",
+  "mensaje_inicial": "Cargá un pedido nuevo: cliente CLI-1002 (Comercial Norte S.R.L.), pedido PED-0001, por USD 50000. Decime si es apto y mostrame el cálculo."
+}

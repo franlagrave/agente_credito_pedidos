@@ -1,0 +1,124 @@
+[
+  {
+    "name": "consultar_credito_cliente",
+    "description": "Consulta la ficha crediticia completa de un cliente en la base: razón social, CUIT, contacto, límite de crédito, fecha del último balance presentado, saldo de cuenta corriente, deuda vencida y calificación de riesgo Veraz (categoría 1, 3 o 5). Debe usarse SIEMPRE al recibir un nuevo pedido, antes de evaluar nada. Nunca asumas ni inventes estos datos.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "cliente_id": {
+          "type": "string",
+          "description": "Identificador del cliente (ej: 'CLI-1002') o su CUIT (ej: '30-70987654-2')."
+        }
+      },
+      "required": ["cliente_id"]
+    }
+  },
+  {
+    "name": "listar_clientes",
+    "description": "Devuelve la lista de todos los clientes de la base con sus datos principales. Usala cuando el usuario no indique un cliente concreto, cuando quiera ver la cartera completa, o cuando necesites resolver un cliente mencionado por nombre o razón social en lugar de por ID.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "filtro": {
+          "type": "string",
+          "description": "Texto opcional para filtrar por razón social, CUIT o ID de cliente. Si se omite, devuelve los 10 clientes."
+        }
+      },
+      "required": []
+    }
+  },
+  {
+    "name": "evaluar_politica_credito",
+    "description": "Aplica la política de crédito vigente a un pedido y determina si el cliente es APTO o NO APTO. Ejecuta el cálculo aritmético completo: límite ajustado = límite de crédito x factor por calificación Veraz (cat.1 = 1.00, cat.3 = 0.50, cat.5 = 0.00) x factor por antigüedad del balance (0.50 si el último balance tiene más de 18 meses, 1.00 si no); crédito disponible = límite ajustado - saldo de cuenta corriente. El pedido es APTO solo si la calificación Veraz no es 5, el cliente no registra deuda vencida y el monto entra en el crédito disponible. Usala siempre después de consultar_credito_cliente, y de nuevo para reevaluar luego de una gestión de cobranza. Devuelve el detalle completo del cálculo para poder explicárselo al usuario.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "cliente_id": {
+          "type": "string",
+          "description": "Identificador del cliente cuyo pedido se evalúa (ej: 'CLI-1002')."
+        },
+        "monto_pedido": {
+          "type": "number",
+          "description": "Monto total del pedido a evaluar, en USD."
+        }
+      },
+      "required": ["cliente_id", "monto_pedido"]
+    }
+  },
+  {
+    "name": "gestionar_cobranza",
+    "description": "Registra una acción de cobranza para un cliente que no cumple la política de crédito por deuda vencida: notifica a Ventas, solicita al cliente un compromiso de pago o la acreditación de la deuda, y fija un plazo antes de reevaluar. Usar cuando evaluar_politica_credito devuelve apto=false por deuda vencida.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "cliente_id": {
+          "type": "string",
+          "description": "Identificador del cliente."
+        },
+        "monto_pedido": {
+          "type": "number",
+          "description": "Monto del pedido que está a la espera de liberación, en USD."
+        },
+        "deuda_vencida": {
+          "type": "number",
+          "description": "Monto de deuda vencida que el cliente debe regularizar, en USD."
+        },
+        "plazo_dias": {
+          "type": "integer",
+          "description": "Días de plazo otorgados al cliente para regularizar la situación.",
+          "default": 5
+        }
+      },
+      "required": ["cliente_id", "monto_pedido", "deuda_vencida"]
+    }
+  },
+  {
+    "name": "registrar_pago",
+    "description": "Registra en la cuenta corriente del cliente un pago acreditado, descontándolo de la deuda vencida y del saldo. Usala cuando el usuario informa que el cliente pagó o acreditó un importe, para poder reevaluar la situación con datos actualizados en lugar de asumir que la deuda se canceló.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "cliente_id": {
+          "type": "string",
+          "description": "Identificador del cliente que realizó el pago."
+        },
+        "monto_pago": {
+          "type": "number",
+          "description": "Importe acreditado, en USD."
+        }
+      },
+      "required": ["cliente_id", "monto_pago"]
+    }
+  },
+  {
+    "name": "liberar_pedido",
+    "description": "Libera un pedido para que continúe con entrega y facturación, generando el documento de venta en el ERP e imputando el monto al saldo de cuenta corriente del cliente. Usar SOLO cuando evaluar_politica_credito devolvió apto=true, o cuando una excepción fue aprobada explícitamente por una persona en la conversación (es_excepcion=true). Liberar un pedido NO APTO sin aprobación humana explícita está prohibido.",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "cliente_id": {
+          "type": "string",
+          "description": "Identificador del cliente."
+        },
+        "pedido_id": {
+          "type": "string",
+          "description": "Identificador del pedido a liberar (ej: 'PED-0001')."
+        },
+        "monto_pedido": {
+          "type": "number",
+          "description": "Monto total del pedido, en USD."
+        },
+        "es_excepcion": {
+          "type": "boolean",
+          "default": false,
+          "description": "true solo si el pedido se libera pese a NO ser apto, por una excepción comercial aprobada por una persona."
+        },
+        "aprobado_por": {
+          "type": "string",
+          "description": "Nombre o rol de la persona que aprobó la excepción. Obligatorio cuando es_excepcion es true."
+        }
+      },
+      "required": ["cliente_id", "pedido_id", "monto_pedido"]
+    }
+  }
+]
