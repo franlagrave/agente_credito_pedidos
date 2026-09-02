@@ -27,6 +27,12 @@ import os
 import sys
 from pathlib import Path
 
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    # La consola de Windows suele usar cp1252, que no puede imprimir buena
+    # parte del texto (acentos, emojis) que el modelo devuelve.
+    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stderr.reconfigure(encoding="utf-8")
+
 try:
     import anthropic
 except ImportError:
@@ -44,6 +50,15 @@ from mock.tools_impl import TOOL_DISPATCH
 
 BASE_DIR = Path(__file__).resolve().parent
 CONFIG_DIR = BASE_DIR / "config"
+
+
+def _headers_workspace() -> dict:
+    """Algunas API keys quedan ligadas a la identidad del usuario (no a un
+    workspace fijo) y la API exige indicar en qué workspace actuar. Si se
+    configuró ANTHROPIC_WORKSPACE_ID en el entorno, se lo mandamos; si no,
+    no agregamos nada (las keys de workspace normales no lo necesitan)."""
+    workspace_id = os.environ.get("ANTHROPIC_WORKSPACE_ID")
+    return {"anthropic-workspace-id": workspace_id} if workspace_id else {}
 
 
 def cargar_config():
@@ -118,7 +133,7 @@ def main():
 
     agent_config, tools, skills = cargar_config()
     system_prompt = construir_system_prompt(agent_config, skills)
-    client = anthropic.Anthropic(api_key=api_key)
+    client = anthropic.Anthropic(api_key=api_key, default_headers=_headers_workspace())
 
     messages = []
 

@@ -1,0 +1,47 @@
+{
+  "_descripcion": "Guion para simular_dia_trabajo.py: 5 casos que representan consultas típicas que le llegan al agente de crédito de parte del equipo comercial en un día de trabajo. Cada caso mezcla una consulta de estado de cuenta con la carga de un pedido nuevo, para mostrar tanto la liberación directa como los caminos de excepción (cobranza, balance vencido, aprobación humana).",
+  "casos": [
+    {
+      "nombre": "Consulta de rutina y liberación directa (CLI-1001)",
+      "turnos": [
+        "¿Cuál es el estado de cuenta de Distribuidora del Plata S.A., cliente CLI-1001?",
+        "Comercial me pasó un pedido nuevo, PED-2001, por USD 80.000 para ese cliente. ¿Se puede liberar?"
+      ]
+    },
+    {
+      "nombre": "Deuda vencida, cobranza y reevaluación tras el pago (CLI-1002)",
+      "turnos": [
+        "Necesito el estado de cuenta de Comercial Norte S.R.L., cliente CLI-1002.",
+        "Comercial quiere cargar el pedido PED-2002 por USD 50.000 para ese cliente. ¿Es apto? Si no, decime exactamente qué necesita para poder aprobarse.",
+        "Buenas noticias: el cliente acaba de acreditar el pago de toda la deuda vencida. Registrá ese pago y volvé a evaluar el mismo pedido."
+      ]
+    },
+    {
+      "nombre": "Balance desactualizado, límite reducido a la mitad (CLI-1004)",
+      "turnos": [
+        "Pasame el estado de cuenta de Insumos del Litoral S.A., cliente CLI-1004.",
+        "Nos llegó el pedido PED-2003 por USD 50.000 para ese cliente. ¿Es apto? Si no lo es, explicame por qué el crédito disponible no es el límite completo y qué necesitaría el cliente para que se apruebe."
+      ]
+    },
+    {
+      "nombre": "Veraz irrecuperable, escalamiento y excepción comercial aprobada (CLI-1005)",
+      "turnos": [
+        "¿Cuál es el estado de cuenta de Grupo Austral Comercial S.R.L., cliente CLI-1005?",
+        "Nos piden liberar el pedido PED-2004 por USD 5.000 para ese cliente. ¿Se puede aprobar?",
+        "El gerente comercial insiste: quiere liberarlo igual como excepción y se hace responsable por escrito. Marcalo como excepción y liberalo."
+      ],
+      "aprobacion_excepcion": {
+        "aprobar": true,
+        "aprobado_por": "Gestor de Crédito de guardia (decisión simulada para esta demo)"
+      }
+    },
+    {
+      "nombre": "Caso límite exacto, USD 1 hace la diferencia (CLI-1008)",
+      "turnos": [
+        "Estado de cuenta de Tecno Aprovisionamiento S.A., cliente CLI-1008, por favor.",
+        "Tienen un pedido de exactamente USD 200.000 para ese cliente. ¿Se puede liberar?",
+        "¿Y si en vez de eso el pedido fuera de USD 200.001? Quiero entender el borde exacto."
+      ]
+    }
+  ]
+}
