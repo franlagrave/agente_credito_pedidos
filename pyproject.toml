@@ -1,0 +1,2 @@
+[tool.vercel]
+entrypoint = "interfaz_web:app"
