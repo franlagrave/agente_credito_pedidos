@@ -299,6 +299,17 @@ const input = document.getElementById('mensaje');
 const btnEnviar = document.getElementById('btnEnviar');
 const btnReiniciar = document.getElementById('btnReiniciar');
 
+// En pantallas chicas el placeholder largo no entra y se corta a mitad
+// de palabra; se usa uno más corto en su lugar.
+const mqMobile = window.matchMedia('(max-width: 640px)');
+function ajustarPlaceholder() {
+  input.placeholder = mqMobile.matches
+    ? 'Escribí tu mensaje...'
+    : 'Escribí como si fueras del equipo comercial...';
+}
+ajustarPlaceholder();
+mqMobile.addEventListener('change', ajustarPlaceholder);
+
 let pensandoEl = null;
 let colaTools = []; // tool_llamada en orden -> se completan en el mismo orden con tool_resultado
 
