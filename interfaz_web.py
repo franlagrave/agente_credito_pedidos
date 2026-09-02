@@ -199,6 +199,8 @@ def stream():
 
 
 if __name__ == "__main__":
+    puerto = int(os.environ.get("PORT", 5000))
+    host = "0.0.0.0" if "PORT" in os.environ else "127.0.0.1"
     print(f"\nAgente: {agent_config['nombre']}  (modelo: {agent_config['modelo']})")
-    print("Interfaz web disponible en http://127.0.0.1:5000  (Ctrl+C para cortar)\n")
-    app.run(host="127.0.0.1", port=5000, debug=False, threaded=True)
+    print(f"Interfaz web disponible en http://{host}:{puerto}  (Ctrl+C para cortar)\n")
+    app.run(host=host, port=puerto, debug=False, threaded=True)
