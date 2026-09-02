@@ -1,2 +1,13 @@
+[project]
+name = "agente-credito-pedidos"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "anthropic>=0.40.0",
+    "python-dotenv>=1.0.0",
+    "openpyxl>=3.1.0",
+    "flask>=3.0.0",
+]
+
 [tool.vercel]
 entrypoint = "interfaz_web:app"
