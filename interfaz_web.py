@@ -67,13 +67,26 @@ client = anthropic.Anthropic(api_key=api_key, default_headers=_headers_workspace
 app = Flask(__name__)
 
 # Estado global: una sola conversación activa a la vez (ver docstring).
+# El navegador (sobre todo en mobile) puede reconectar el EventSource en
+# medio de un turno (pantalla bloqueada, cambio de red, app en segundo
+# plano) sin que se note del lado del usuario. Si hubiera una sola cola
+# compartida, esa reconexión crea un segundo generador consumiendo de la
+# misma cola y eventos como "fin_turno" pueden terminar entregados a la
+# conexión vieja (ya cerrada) en vez de a la pestaña visible, dejando el
+# input bloqueado para siempre. Por eso cada conexión SSE tiene su propia
+# cola y emitir() difunde a todas.
 messages: list = []
-eventos: "queue.Queue[dict]" = queue.Queue()
+clientes_sse: "list[queue.Queue[dict]]" = []
+lock_clientes_sse = threading.Lock()
 aprobacion_pendiente = {"event": None, "decision": None}
 
 
 def emitir(tipo: str, **datos):
-    eventos.put({"tipo": tipo, **datos})
+    evento = {"tipo": tipo, **datos}
+    with lock_clientes_sse:
+        colas = list(clientes_sse)
+    for cola in colas:
+        cola.put(evento)
 
 
 def pedir_aprobacion_web(tool_input: dict) -> tuple[bool, str]:
@@ -189,13 +202,33 @@ def reiniciar():
 
 @app.route("/stream")
 def stream():
-    def generar():
-        yield ": conectado\n\n"
-        while True:
-            evento = eventos.get()
-            yield f"data: {json.dumps(evento, ensure_ascii=False)}\n\n"
+    cola: "queue.Queue[dict]" = queue.Queue()
+    with lock_clientes_sse:
+        clientes_sse.append(cola)
 
-    return Response(generar(), mimetype="text/event-stream")
+    def generar():
+        try:
+            yield ": conectado\n\n"
+            while True:
+                evento = cola.get()
+                yield f"data: {json.dumps(evento, ensure_ascii=False)}\n\n"
+        finally:
+            with lock_clientes_sse:
+                if cola in clientes_sse:
+                    clientes_sse.remove(cola)
+
+    return Response(
+        generar(),
+        mimetype="text/event-stream",
+        headers={
+            # Sin esto, algunos proxies (Render incluido) bufferean la
+            # respuesta y el navegador no recibe nada hasta que se corta
+            # la conexión — el chat queda esperando para siempre.
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
+    )
 
 
 if __name__ == "__main__":
